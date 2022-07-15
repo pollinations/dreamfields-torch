@@ -77,6 +77,7 @@ class NeRFNetwork(NeRFRenderer):
 
         return {
             'sigma': sigma,
+            'color': color
         }
 
 
