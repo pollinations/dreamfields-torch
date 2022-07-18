@@ -245,12 +245,24 @@ class NeRFGUI:
                     # save mesh
                     with dpg.group(horizontal=True):
                         dpg.add_text("Marching Cubes: ")
-
-                        def callback_mesh(sender, app_data):
-                            self.trainer.save_mesh(resolution=256, threshold=10)
+                        
+                    def callback_mesh(sender, app_data):
+                            self.trainer.save_mesh(resolution=self.mesh_resolution, threshold=self.mesh_threshold,)
                             dpg.set_value("_log_mesh", "saved " + f'{self.trainer.name}_{self.trainer.epoch}.ply')
                             self.trainer.epoch += 1 # use epoch to indicate different calls.
-
+                            
+                    def callback_set_threshold(sender, app_data):
+                            self.mesh_threshold = app_data
+                            self.need_update = True
+                        
+                    def callback_set_resolution(sender, app_data):
+                            self.mesh_resolution = app_data
+                            self.need_update = True
+                    with dpg.group(horizontal=True):  
+                        dpg.add_slider_int(label="Mesh threshold", min_value=0, max_value=100, default_value=self.mesh_threshold, callback=callback_set_threshold)
+                    with dpg.group(horizontal=True):    
+                        dpg.add_slider_int(label="Mesh resolution", min_value=1, max_value=512, default_value=self.mesh_resolution, callback=callback_set_resolution)
+                    with dpg.group(horizontal=True):
                         dpg.add_button(label="mesh", tag="_button_mesh", callback=callback_mesh)
                         dpg.bind_item_theme("_button_mesh", theme_button)
 
