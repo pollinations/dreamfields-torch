@@ -8,7 +8,8 @@ numpy
 pandas
 tqdm
 matplotlib
-PyMCubes
+#PyMCubes
+git+https://github.com/JustusThies/PyMarchingCubes.git
 rich
 pysdf
 dearpygui
