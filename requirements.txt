@@ -9,7 +9,7 @@ pandas
 tqdm
 matplotlib
 #PyMCubes
-git+https://github.com/JustusThies/PyMarchingCubes.git
+#git+https://github.com/JustusThies/PyMarchingCubes.git
 rich
 pysdf
 dearpygui
