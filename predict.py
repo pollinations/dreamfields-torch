@@ -2,6 +2,7 @@
 # https://github.com/replicate/cog/blob/main/docs/python.md
 
 from cog import BasePredictor, Input, Path
+from typing import List
 import torch
 import argparse
 
@@ -11,6 +12,10 @@ from nerf.network import NeRFNetwork
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+def _print(stuff):
+    print(stuff)
+    print(os.popen("ls /tmp").read())
 
 
 class Predictor(BasePredictor):
@@ -50,7 +55,7 @@ class Predictor(BasePredictor):
         H: int = Input(description="H", default=800),
         fovy: float = Input(description="default GUI camera fovy", default=90),
         max_spp: int = Input(description="GUI rendering max sample per pixel", default=64)
-    ) -> Path:
+    ) -> List[Path]:
         """Run a single prediction on the self.model"""
         opt = argparse.Namespace(
             text=text,
@@ -83,6 +88,8 @@ class Predictor(BasePredictor):
             workspace="/outputs",
             ckpt="latest"
         )
+        if not os.path.exists(opt.workspace):
+            os.makedirs(opt.workspace)
         seed_everything(opt.seed)
         model = self.model
         optimizer = lambda model: torch.optim.Adam(model.get_params(opt.lr), betas=(0.9, 0.99), eps=1e-15)
@@ -102,3 +109,4 @@ class Predictor(BasePredictor):
         # also test
         test_loader = NeRFDataset(opt, device=device, type='test', H=opt.H, W=opt.W, radius=opt.radius, fovy=opt.fovy, size=10).dataloader()
         trainer.test(test_loader)
+
