@@ -28,7 +28,7 @@ import torch.distributed as dist
 from torch.utils.data import Dataset, DataLoader
 
 import trimesh
-import marching_cubes as mcubes
+# import marching_cubes as mcubes
 from rich.console import Console
 from torch_ema import ExponentialMovingAverage
 
@@ -252,6 +252,7 @@ class Trainer(object):
         self.scheduler_update_every_step = scheduler_update_every_step
         self.device = device if device is not None else torch.device(f'cuda:{local_rank}' if torch.cuda.is_available() else 'cpu')
         self.console = Console()
+        self.log_ptr = None
 
         model.to(self.device)
         if self.world_size > 1:

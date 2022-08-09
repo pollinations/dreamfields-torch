@@ -32,6 +32,7 @@ if __name__ == '__main__':
     parser.add_argument('--dt_gamma', type=float, default=0, help="dt_gamma (>=0) for adaptive ray marching. set to 0 to disable, >0 to accelerate rendering (but usually with worse quality)")
     parser.add_argument('--w', type=int, default=128, help="render width for CLIP training (<=224)")
     parser.add_argument('--h', type=int, default=128, help="render height for CLIP training (<=224)")
+
     ### GUI options
     parser.add_argument('--gui', action='store_true', help="start a GUI")
     parser.add_argument('--W', type=int, default=800, help="GUI width")
@@ -39,6 +40,7 @@ if __name__ == '__main__':
     parser.add_argument('--radius', type=float, default=3, help="default GUI camera radius from center")
     parser.add_argument('--fovy', type=float, default=90, help="default GUI camera fovy")
     parser.add_argument('--max_spp', type=int, default=64, help="GUI rendering max sample per pixel")
+    
     ### other options
     parser.add_argument('--tau_0', type=float, default=0.5, help="target mean transparency 0")
     parser.add_argument('--tau_1', type=float, default=0.8, help="target mean transparency 1")
@@ -73,15 +75,10 @@ if __name__ == '__main__':
 
         trainer = Trainer('ngp', opt, model, device=device, workspace=opt.workspace, fp16=opt.fp16, use_checkpoint='latest')
 
-        if opt.gui:
-            from nerf.gui import NeRFGUI
-            gui = NeRFGUI(opt, trainer)
-            gui.render()
         
-        else:
-            test_loader = NeRFDataset(opt, device=device, type='test', H=opt.H, W=opt.W, radius=opt.radius, fovy=opt.fovy, size=10).dataloader()
+        test_loader = NeRFDataset(opt, device=device, type='test', H=opt.H, W=opt.W, radius=opt.radius, fovy=opt.fovy, size=10).dataloader()
 
-            trainer.test(test_loader)
+        trainer.test(test_loader)
     
     else:
 
@@ -94,19 +91,11 @@ if __name__ == '__main__':
 
         trainer = Trainer('ngp', opt, model, device=device, workspace=opt.workspace, optimizer=optimizer, ema_decay=0.95, fp16=opt.fp16, lr_scheduler=scheduler, use_checkpoint=opt.ckpt, eval_interval=20)
 
-        if opt.gui:
-            from nerf.gui import NeRFGUI
-            trainer.train_loader = train_loader # attach dataloader to trainer
+        valid_loader = NeRFDataset(opt, device=device, type='val', H=opt.H, W=opt.W, radius=opt.radius, fovy=opt.fovy, size=10).dataloader()
 
-            gui = NeRFGUI(opt, trainer)
-            gui.render()
-        
-        else:
-            valid_loader = NeRFDataset(opt, device=device, type='val', H=opt.H, W=opt.W, radius=opt.radius, fovy=opt.fovy, size=10).dataloader()
+        max_epoch = np.ceil(opt.iters / len(train_loader)).astype(np.int32)
+        trainer.train(train_loader, valid_loader, max_epoch)
 
-            max_epoch = np.ceil(opt.iters / len(train_loader)).astype(np.int32)
-            trainer.train(train_loader, valid_loader, max_epoch)
-
-            # also test
-            test_loader = NeRFDataset(opt, device=device, type='test', H=opt.H, W=opt.W, radius=opt.radius, fovy=opt.fovy, size=10).dataloader()
-            trainer.test(test_loader)
+        # also test
+        test_loader = NeRFDataset(opt, device=device, type='test', H=opt.H, W=opt.W, radius=opt.radius, fovy=opt.fovy, size=10).dataloader()
+        trainer.test(test_loader)

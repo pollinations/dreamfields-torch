@@ -1,0 +1,39 @@
+# Configuration for Cog ⚙️
+# Reference: https://github.com/replicate/cog/blob/main/docs/yaml.md
+
+build:
+  # set to true if your model requires a GPU
+  gpu: true
+
+  # cuda: "10.2"
+
+  # a list of ubuntu apt packages to install
+  system_packages:
+    - "ffmpeg"
+    - "libsm6"
+    - "libxext6"
+
+  # python version in the form '3.8' or '3.8.12'
+  python_version: "3.8"
+
+  # a list of packages in the format <package-name>==<version>
+  python_packages:
+    - "torch==1.10.1"
+    - "torchvision==0.11.2"
+    - "opencv-python==4.6.0.66"
+    - "tqdm==4.64.0"
+    - "scipy==1.7.3"
+    - "trimesh==3.12.9"
+    - "Pillow==9.2.0"
+    - "matplotlib==3.5.2"
+  
+  # commands run after the environment is setup
+  run:
+    - "wget https://raw.githubusercontent.com/pollinations/dreamfields-torch/main/requirements.txt"
+    - "pip install -r requirements.txt"
+    # - "python /dreamfields-torch/raymarching/setup.py build_ext --inplace"
+    # - "pip install /dreamfields-torch/raymarching"
+    - "pip install tensorboardX pandas"
+
+# predict.py defines how predictions are run on your model
+predict: "predict.py:Predictor"
