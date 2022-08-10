@@ -115,5 +115,7 @@ class Predictor(BasePredictor):
         target_path = os.path.join("/tmp", f"z_{slugify(text)}.obj")
         trainer.save_mesh(target_path)
         
+        os.system(f"cp {target_path} /outputs")
+        
         return Path(target_path)
 
