@@ -6,6 +6,8 @@ from typing import List
 import torch
 import argparse
 
+from slugify import slugify
+
 from nerf.provider import NeRFDataset
 from nerf.utils import *
 from nerf.network import NeRFNetwork
@@ -55,7 +57,7 @@ class Predictor(BasePredictor):
         H: int = Input(description="H", default=800),
         fovy: float = Input(description="default GUI camera fovy", default=90),
         max_spp: int = Input(description="GUI rendering max sample per pixel", default=64)
-    ) -> List[Path]:
+    ) -> Path:
         """Run a single prediction on the self.model"""
         opt = argparse.Namespace(
             text=text,
@@ -109,4 +111,8 @@ class Predictor(BasePredictor):
         # also test
         test_loader = NeRFDataset(opt, device=device, type='test', H=opt.H, W=opt.W, radius=opt.radius, fovy=opt.fovy, size=10).dataloader()
         trainer.test(test_loader)
+
+        target_path = os.path.join("/tmp", f"{slugify(text)}.obj")
+        trainer.save_mesh(target_path)
+        return Path(target_path)
 

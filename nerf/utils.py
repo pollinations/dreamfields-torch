@@ -28,7 +28,7 @@ import torch.distributed as dist
 from torch.utils.data import Dataset, DataLoader
 
 import trimesh
-# import marching_cubes as mcubes
+import marching_cubes as mcubes
 from rich.console import Console
 from torch_ema import ExponentialMovingAverage
 

@@ -31,9 +31,15 @@ build:
   run:
     - "wget https://raw.githubusercontent.com/pollinations/dreamfields-torch/main/requirements.txt"
     - "pip install -r requirements.txt"
-    # - "python /dreamfields-torch/raymarching/setup.py build_ext --inplace"
-    # - "pip install /dreamfields-torch/raymarching"
-    - "pip install tensorboardX pandas"
+    - "git clone https://github.com/pollinations/dreamfields-torch.git"
+    - "cd /dreamfields-torch/raymarching && pip install ."
+    # - "cd /dreamfields-torch/shencoder && pip install ."
+    # - "pip install git+https://github.com/facebookresearch/pytorch3d.git@stable"
+    - "pip install tensorboardX pandas python-slugify"
+    - "git clone https://github.com/JustusThies/PyMarchingCubes.git"
+    - "cd PyMarchingCubes && git clone https://gitlab.com/libeigen/eigen.git"
+    - "cd PyMarchingCubes/eigen && git checkout tags/3.4.0"
+    - "cd PyMarchingCubes && python setup.py install"
 
 # predict.py defines how predictions are run on your model
 predict: "predict.py:Predictor"
