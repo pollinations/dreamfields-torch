@@ -112,7 +112,8 @@ class Predictor(BasePredictor):
         test_loader = NeRFDataset(opt, device=device, type='test', H=opt.H, W=opt.W, radius=opt.radius, fovy=opt.fovy, size=10).dataloader()
         trainer.test(test_loader)
 
-        target_path = os.path.join("/tmp", f"{slugify(text)}.obj")
+        target_path = os.path.join("/tmp", f"z_{slugify(text)}.obj")
         trainer.save_mesh(target_path)
+        
         return Path(target_path)
 
