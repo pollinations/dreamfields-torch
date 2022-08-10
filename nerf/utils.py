@@ -623,7 +623,7 @@ class Trainer(object):
     def test(self, loader, save_path=None):
 
         if save_path is None:
-            save_path = os.path.join(self.workspace, 'results')
+            save_path = os.path.join(self.workspace)
 
         os.makedirs(save_path, exist_ok=True)
         
@@ -643,8 +643,8 @@ class Trainer(object):
                 with torch.cuda.amp.autocast(enabled=self.fp16):
                     preds, preds_depth = self.test_step(data)                
                 
-                path = os.path.join(save_path, f'{i:04d}.png')
-                path_depth = os.path.join(save_path, f'{i:04d}_depth.png')
+                path = os.path.join(save_path, f'result_{i:04d}.png')
+                path_depth = os.path.join(save_path, f'depth_{i:04d}.png')
 
                 #self.log(f"[INFO] saving test image to {path}")
 

@@ -34,7 +34,7 @@ class Predictor(BasePredictor):
         text: str = Input(description="Text to render"),
         image: Path = Input(description="ref image prompt", default=None),
         seed: int = Input(description="random seed", default=123),
-        iters: int = Input(description="training iters", default=30000),
+        iters: int = Input(description="training iters", default=3000),
         lr: float = Input(description="initital learning rate", default=5e-4),
         num_rays: int = Input(description="number of rays", default=4096),
         # cuda_ray: bool = Input(description="use CUDA raymarching instead of pytorch", default=False),
