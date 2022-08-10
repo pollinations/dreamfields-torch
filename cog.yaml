@@ -12,6 +12,8 @@ build:
     - "ffmpeg"
     - "libsm6"
     - "libxext6"
+    - "nodejs"
+    - "npm"
 
   # python version in the form '3.8' or '3.8.12'
   python_version: "3.8"
@@ -26,6 +28,7 @@ build:
     - "trimesh==3.12.9"
     - "Pillow==9.2.0"
     - "matplotlib==3.5.2"
+    - "pymeshlab==2022.2.post2"
   
   # commands run after the environment is setup
   run:
@@ -40,6 +43,16 @@ build:
     - "cd PyMarchingCubes && git clone https://gitlab.com/libeigen/eigen.git"
     - "cd PyMarchingCubes/eigen && git checkout tags/3.4.0"
     - "cd PyMarchingCubes && python setup.py install"
-
+    
+    # node
+    - apt-get update
+    - apt-get -y install curl gnupg
+    - curl -sL https://deb.nodesource.com/setup_16.x  | bash -
+    - apt-get -y install nodejs
+    #- npm install
+    # obj2gltf NPM package
+    - "npm install -g obj2gltf"
 # predict.py defines how predictions are run on your model
 predict: "predict.py:Predictor"
+
+

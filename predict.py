@@ -11,7 +11,7 @@ from slugify import slugify
 from nerf.provider import NeRFDataset
 from nerf.utils import *
 from nerf.network import NeRFNetwork
-
+import pymeshlab
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -112,10 +112,31 @@ class Predictor(BasePredictor):
         test_loader = NeRFDataset(opt, device=device, type='test', H=opt.H, W=opt.W, radius=opt.radius, fovy=opt.fovy, size=10).dataloader()
         trainer.test(test_loader)
 
-        target_path = os.path.join("/tmp", f"z_{slugify(text)}.obj")
+        target_path = os.path.join("/tmp", f"y_{slugify(text)}.obj")
         trainer.save_mesh(target_path)
         
-        os.system(f"cp {target_path} /outputs")
+
+        ms = pymeshlab.MeshSet()
+
+        ms.load_new_mesh(target_path)
         
-        return Path(target_path)
+        # run filter meshing_invert_face_orientation
+        ms.meshing_invert_face_orientation()
+
+        ms.save_current_mesh(target_path) 
+
+        text_slug = slugify(text)
+
+
+
+        os.system(f"cp -v {target_path} /outputs")
+        os.system(f"ls -l {target_path}")
+
+        # save as glb file
+        target_glb_path = os.path.join("/outputs",f"z_{text_slug}.glb")
+        print("running ", f"obj2gltf -i {target_path} -o {target_glb_path}")
+        
+        os.system(f"obj2gltf -i {target_path} -o {target_glb_path}")
+
+        return Path(target_glb_path)
 
