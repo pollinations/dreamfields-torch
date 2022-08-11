@@ -122,7 +122,7 @@ class Predictor(BasePredictor):
         
         # run filter meshing_invert_face_orientation
         ms.meshing_invert_face_orientation()
-
+        ms.compute_color_transfer_vertex_to_face()
         ms.save_current_mesh(target_path) 
 
         text_slug = slugify(text)
