@@ -138,5 +138,5 @@ class Predictor(BasePredictor):
         
         os.system(f"obj2gltf -i {target_path} -o {target_glb_path}")
 
-        return Path(target_glb_path)
+        return Path(target_path)
 
