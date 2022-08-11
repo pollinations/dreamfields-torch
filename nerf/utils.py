@@ -600,7 +600,7 @@ class Trainer(object):
         if self.use_tensorboardX and self.local_rank == 0:
             self.writer = tensorboardX.SummaryWriter(os.path.join(self.workspace, "run", self.name))
         
-        for epoch in range(self.epoch, max_epochs + 1):
+        for epoch in tqdm.tqdm(range(self.epoch, max_epochs + 1)):
             self.epoch = epoch
 
             self.train_one_epoch(train_loader)
@@ -894,7 +894,7 @@ class Trainer(object):
                 if self.local_rank == 0:
 
                     # save image
-                    save_path = os.path.join(self.workspace, 'validation', f'{self.name}_{self.epoch:04d}_{self.local_step:04d}.png')
+                    save_path = os.path.join(self.workspace, f'a_{self.name}_{self.epoch:04d}_{self.local_step:04d}.png')
                     save_path_depth = os.path.join(self.workspace, 'validation', f'{self.name}_{self.epoch:04d}_{self.local_step:04d}_depth.png')
                     #save_path_gt = os.path.join(self.workspace, 'validation', f'{self.name}_{self.epoch:04d}_{self.local_step:04d}_gt.png')
 
