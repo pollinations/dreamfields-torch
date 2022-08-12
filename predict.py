@@ -127,7 +127,7 @@ class Predictor(BasePredictor):
         # run filter meshing_invert_face_orientation
         ms.meshing_invert_face_orientation()
         ms.compute_color_transfer_vertex_to_face()
-        ms.meshing_decimation_quadric_edge_collapse(targetfacenum=20000)
+        ms.meshing_decimation_quadric_edge_collapse(targetfacenum=6500)
         ms.save_current_mesh(target_path) 
 
         text_slug = slugify(text)
