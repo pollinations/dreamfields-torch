@@ -115,7 +115,10 @@ class Predictor(BasePredictor):
         target_path = os.path.join("/tmp", f"y_{slugify(text)}.obj")
         trainer.save_mesh(target_path)
         
-
+        # it seems that save_mesh may sometimes not finish writing the mesh file? or is it zero bytes?
+        os.system("ls -l target_path")
+        sleep(5)
+        
         ms = pymeshlab.MeshSet()
 
         ms.load_new_mesh(target_path)

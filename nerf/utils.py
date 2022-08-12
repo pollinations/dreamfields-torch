@@ -451,6 +451,7 @@ class Trainer(object):
 
         if self.text_z is not None:
             if self.opt.dir_text:
+                print("data",data)
                 dirs = data['dir'] # [B,]
                 text_z = self.text_z[dirs]
             else:
