@@ -12,6 +12,7 @@ from nerf.provider import NeRFDataset
 from nerf.utils import *
 from nerf.network import NeRFNetwork
 import pymeshlab
+from time import sleep
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
