@@ -291,7 +291,7 @@ class Trainer(object):
                 self.text_z = self.clip_model.encode_text(text)
             else:
                 texts = []
-                for d in ['front', 'side', 'back', 'side', 'top', 'bottom']:
+                for d in ['front', 'left side', 'back', 'right side', 'top', 'bottom']:
                     text = f"The {d} view of {ref_text}"
                     texts.append(text)
                 texts = clip.tokenize(texts).to(self.device)
