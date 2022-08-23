@@ -117,8 +117,11 @@ class Predictor(BasePredictor):
         trainer.save_mesh(target_path)
         
         # it seems that save_mesh may sometimes not finish writing the mesh file? or is it zero bytes?
-        os.system("ls -l target_path")
-        sleep(5)
+        # so we wait a bit and then check if the file is there, but maximum 60 seconds
+        for i in range(60):
+            if os.path.getsize(target_path) > 100:
+                break
+            time.sleep(1)
         
         ms = pymeshlab.MeshSet()
 
