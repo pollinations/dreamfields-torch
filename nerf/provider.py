@@ -55,7 +55,10 @@ def get_view_direction(thetas, phis):
     # side (right) = 3  270-360
     # top = 4                        0-45
     # bottom = 5                     135-180
+    phis = phis.cpu().numpy()
+    thetas = thetas.cpu().numpy()
     res = np.zeros(phis.shape[0], dtype=np.int64)
+    
     # first determine by phis
     res[phis < (np.pi / 2)] = 0
     res[(phis >= (np.pi / 2)) & (phis < np.pi)] = 1
@@ -85,6 +88,8 @@ def rand_poses(size, device, radius=1, theta_range=[np.pi/3, 2 * np.pi/3], phi_r
     thetas = torch.rand(size, device=device) * (theta_range[1] - theta_range[0]) + theta_range[0]
     phis = torch.rand(size, device=device) * (phi_range[1] - phi_range[0]) + phi_range[0]
 
+    dir = get_view_direction(thetas, phis)
+
     centers = torch.stack([
         radius * torch.sin(thetas) * torch.sin(phis),
         radius * torch.cos(thetas),
@@ -100,8 +105,9 @@ def rand_poses(size, device, radius=1, theta_range=[np.pi/3, 2 * np.pi/3], phi_r
     poses = torch.eye(4, dtype=torch.float, device=device).unsqueeze(0).repeat(size, 1, 1)
     poses[:, :3, :3] = torch.stack((right_vector, up_vector, forward_vector), dim=-1)
     poses[:, :3, 3] = centers
+    
 
-    return poses
+    return poses, dir
 
 
 class NeRFDataset:
@@ -127,6 +133,8 @@ class NeRFDataset:
         cy = self.W / 2
         self.intrinsics = np.array([fl_x, fl_y, cx, cy])
 
+        self.dir = ['front', 'left side', 'back', 'right side', 'top', 'bottom'];
+
         # [debug] visualize poses
         #poses = rand_poses(100, 'cpu', radius=self.radius).detach().numpy()
         #visualize_poses(poses)
@@ -137,7 +145,7 @@ class NeRFDataset:
         B = len(index) # always 1
 
         # random pose
-        poses = rand_poses(B, self.device, radius=self.radius)
+        poses, dir = rand_poses(B, self.device, radius=self.radius)
 
         # sample a low-resolution but full image for CLIP
         rays = get_rays(poses, self.intrinsics, self.H, self.W, -1)
@@ -146,7 +154,8 @@ class NeRFDataset:
             'H': self.H,
             'W': self.W,
             'rays_o': rays['rays_o'],
-            'rays_d': rays['rays_d'],    
+            'rays_d': rays['rays_d'],
+            'dir': dir 
         }
 
     def dataloader(self):
