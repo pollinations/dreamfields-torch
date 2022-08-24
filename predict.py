@@ -121,7 +121,7 @@ class Predictor(BasePredictor):
         for i in range(60):
             if os.path.getsize(target_path) > 100:
                 break
-            time.sleep(1)
+            time.sleep(20)
         
         ms = pymeshlab.MeshSet()
 
