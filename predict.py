@@ -1,18 +1,18 @@
 # Prediction interface for Cog ⚙️
 # https://github.com/replicate/cog/blob/main/docs/python.md
 
-from cog import BasePredictor, Input, Path
-from typing import List
-import torch
 import argparse
+from time import sleep
+from typing import List
 
+import pymeshlab
+import torch
+from cog import BasePredictor, Input, Path
 from slugify import slugify
 
+from nerf.network import NeRFNetwork
 from nerf.provider import NeRFDataset
 from nerf.utils import *
-from nerf.network import NeRFNetwork
-import pymeshlab
-from time import sleep
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -32,14 +32,13 @@ class Predictor(BasePredictor):
 
     def predict(
         self,
-        text: str = Input(description="Text to render"),
-        image: Path = Input(description="ref image prompt", default=None),
+        text_prompt: str = Input(description="Text to render"),
         seed: int = Input(description="random seed", default=123),
-        iters: int = Input(description="training iters", default=3000),
-        lr: float = Input(description="initital learning rate", default=5e-4),
-        num_rays: int = Input(description="number of rays", default=4096),
+        epoch: int = Input(description="training epochs", default=1000),
+        lr: float = Input(description="maximum learning rate", default=5e-4),
+        train_res: int = Input(description="Resolution of render before scaling to 224x224. must be a multiple of 8", default=384),
         # cuda_ray: bool = Input(description="use CUDA raymarching instead of pytorch", default=False),
-        num_steps: int = Input(description="num steps sampled per ray (only valid when not using --cuda_ray)", default=512),
+        batch_size: int = Input(description="How many images of shape are rendered at one epoch)", default=50),
         upsample_steps: int = Input(description="num steps up-sampled per ray (only valid when not using --cuda_ray)", default=0),
         max_ray_batch: int = Input(description="batch size of rays at inference to avoid OOM (only valid when not using --cuda_ray)", default=4096),
         fp16: bool = Input(description="use amp mixed precision training", default=False),
